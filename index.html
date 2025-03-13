@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>جداول طالبات الجمعية الخيرية الإلكترونية لتحفيظ القرآن الكريم</title>
+  <style>
+    /* إعدادات عامة */
+    body {
+      font-family: Arial, sans-serif;
+      text-align: right;
+      background-color: #f2f3f3; /* لون افتراضي (أزرق غامق) */
+      color: rgb(14, 11, 84);
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.3s ease, background-image 0.3s ease;
+      background-size: cover; /* جعل الخلفية متناسقة الحجم */
+      background-repeat: no-repeat; /* منع تكرار الخلفية */
+    }
+    .container {
+      width: 90%;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+    /* رأس الصفحة */
+    .header {
+      text-align: center;
+      padding: 10px;
+    }
+    .logo {
+      width: 150px; /* تكبير الشعار */
+      display: block;
+      margin: auto;
+    }
+    .association-name {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    .teacher-info {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+    /* الجدول */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    th, td {
+      border: 1px solid;
+      padding: 8px;
+      text-align: center;
+      transition: color 0.3s ease, border-color 0.3s ease;
+    }
+    th {
+      background-color: #004080; /* سيتم تحديث لون النص فيه حسب الثيم عبر JavaScript */
+      color: white !important;  /* تأكيد لون النص الأبيض لرؤوس الجدول */
+    }
+    /* حقول الإدخال والعناصر */
+    input, select, button {
+      padding: 10px 5px; /* تكبير الحقول بالطول */
+      margin: 5px 0;
+      border: 1px solid white; /* حدود واضحة */
+      border-radius: 5px;
+      width: 100%;
+      max-width: 150px; /* تقليل العرض الأقصى */
+      font-size: 14px;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+    /* الأزرار */
+    .buttons, .input-group {
+      margin: 10px 0;
+      text-align: center;
+    }
+    button {
+      background-color: #004080;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin: 5px;
+      border-radius: 10px; /* تعديل الزوايا لتكون مربعة */
+      font-weight: bold; /* جعل النص داخل الأزرار بخط عريض */
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #002b5e;
+    }
+    /* قسم الجدول الخاص بالطالبة */
+    #student-section {
+      margin-top: 20px;
+    }
+    /* قسم عرض الجداول السابقة */
+    #saved-students {
+      margin-top: 20px;
+      display: none;
+    }
+    /* الفوتر */
+    .footer {
+      text-align: center;
+      padding: 10px;
+      /* سيتم تعديل لون الخلفية عبر JavaScript */
+      font-size: 12px;
+    }
+    /* تحسين التوافق مع الأجهزة المحمولة */
+    @media (max-width: 768px) {
+      .container {
+        width: 100%;
+        padding: 10px;
+      }
+      button, input, select {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- رأس الصفحة -->
+    <div class="header">
+      <img src=" شعار الجمعيه.jpeg " alt="شعار الجمعية" class="logo">
+      <p class="teacher-info">المعلمة: أروى المضحي</p>
+      <p class="teacher-info">الحلقة: حلقة زينب بنت عثمان - رضي الله عنها -</p>
+    </div>
+
+    <!-- إدخال اسم الطالبة -->
+    <div class="input-group">
+      <label for="student-name">اسم الطالبة:</label>
+      <input type="text" id="student-name">
+      <button onclick="confirmStudent()">تأكيد اسم الطالبة</button>
+    </div>
+
+    <!-- قسم جدول الطالبة وإدخال بيانات الصف -->
+    <div id="student-section" style="display:none;">
+      <h2 id="student-title"></h2>
+      <!-- حقول إدخال بيانات الصف -->
+      <div class="input-group">
+        <label for="week">الأسبوع:</label>
+        <select id="week">
+          <option value="week1">الأسبوع الأول</option>
+          <option value="week2">الأسبوع الثاني</option>
+          <option value="week3">الأسبوع الثالث</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="day">اليوم:</label>
+        <select id="day">
+          <option>الأحد</option>
+          <option>الإثنين</option>
+          <option>الثلاثاء</option>
+          <option>الأربعاء</option>
+          <option>الخميس</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="memorization">مقدار الحفظ:</label>
+        <input type="text" id="memorization" placeholder="مثال: 5 آيات">
+      </div>
+      <div class="input-group">
+        <label for="review">المراجعة:</label>
+        <input type="text" id="review" placeholder="مثال: سورة الفاتحة">
+      </div>
+      <!-- أزرار التحكم -->
+      <div class="buttons">
+        <button onclick="addToTable()">إضافة إلى الجدول</button>
+        <button onclick="saveTableAsImage()">تحميل الجدول كصورة</button>
+        <button onclick="addNewStudent()">إضافة طالبة جديدة</button>
+        <button onclick="showSavedSchedules()">عرض جداول الطالبات</button>
+      </div>
+      <!-- الجدول -->
+      <table id="schedule-table">
+        <thead>
+          <tr>
+            <th>اليوم</th>
+            <th>مقدار الحفظ</th>
+            <th>المراجعة</th>
+            <th>الانجاز</th>
+            <th>تعديل</th>
+            <th>حذف</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- قائمة عرض الجداول السابقة -->
+    <div id="saved-students">
+      <h2>جداول الطالبات:</h2>
+      <div id="students-list"></div>
+    </div>
+
+    <!-- تغيير لون الخلفية -->
+    <div class="input-group">
+      <label for="color-theme">تغيير لون الخلفية:</label>
+      <select id="color-theme" onchange="changeBackgroundColor()">
+        <option value="blue">ابيض  </option>
+        <option value="gray">رصاصي</option>
+        <option value="brown">بني</option>
+        <option value="ramadan">رمضاني</option>
+        <option value="cloud">غيم</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- الفوتر -->
+  <div class="footer">
+    <p style="font-weight: bold; color: #004080;">هذا الموقع تم إنشاؤه وتطويره بواسطة الطالبة: آمنة محمد عسيري</p>
+    <p style="font-weight: bold; color: #004080;">اللهم اجعل هذا العمل خالصا لوجهك، وانفع به</p>
+    <p style="font-weight: bold; color: #004080;">2025</p>
+  </div>
+
+  <script>
+    // كائن الثيمات لتحديث الألوان
+    const themeStyles = {
+      blue: {
+        bodyBg: "white",
+        buttonBg: "#004080",
+        inputBg: "white",
+        inputText: "#003366",
+        tableBg: "white",
+        tableText: "#003366",
+      },
+      gray: {
+        bodyBg: "#808080",       // اللون الرصاصي
+        buttonBg: "#696969",     // لون الأزرار الرصاصي الغامق
+        inputBg: "#808080",      // خلفية الحقول الرصاصي
+        inputText: "white",      // لون النص داخل الحقول أبيض
+        tableBg: "#808080",      // خلفية الجدول رصاصية
+        tableText: "white"       // لون النص داخل خلايا الجدول أبيض
+      },
+      brown: {
+        bodyBg: "#8b4513",
+        buttonBg: "#a0522d",
+        inputBg: "#8b4513",
+        inputText: "white",
+        tableBg: "#8b4513",
+        tableText: "white"
+      },
+      ramadan: {
+        bodyBg: "url('WhatsApp Image 2025-02-28 at 11.37.29 AM (1).jpeg')",
+        buttonBg: "#004080",
+        inputBg: "white",
+        inputText: "#004080", // لون النص أزرق غامق
+        tableBg: "white",
+        tableText: "#003366",
+      },
+      cloud: {
+        bodyBg: "url('WhatsApp Image 2025-03-10 at 5.32.12 PM.jpeg')",
+        buttonBg: "#004080",
+        inputBg: "white",
+        inputText: "#004080",
+        tableBg: "white",
+        tableText: "#003366",
+      }
+    };
+
+    // تعديل رؤوس الجدول بحيث يكون لون النص أبيض لجميع الثيمات
+    const headerTextColors = {
+      blue: "white",
+      gray: "white",
+      brown: "white"
+    };
+
+    let currentStudent = null;
+    let schedules = JSON.parse(localStorage.getItem('schedules')) || {};
+
+    // دالة تأكيد اسم الطالبة
+    function confirmStudent() {
+      const nameInput = document.getElementById("student-name");
+      const studentName = nameInput.value.trim();
+      if (studentName !== "") {
+        currentStudent = studentName;
+        document.getElementById("student-section").style.display = "block";
+        document.getElementById("student-title").innerText = "جدول الطالبة: " + studentName;
+        loadStudentSchedule(studentName);
+      } else {
+        alert("يرجى إدخال اسم الطالبة!");
+      }
+    }
+
+    // دالة تحميل جدول الطالبة من التخزين المحلي
+    function loadStudentSchedule(studentName) {
+      const tableBody = document.getElementById("schedule-table").getElementsByTagName("tbody")[0];
+      tableBody.innerHTML = "";
+      if (schedules[studentName]) {
+        let currentWeek = "";
+        schedules[studentName].forEach((rowData, index) => {
+          // التحقق من وجود بداية أسبوع جديد
+          const weekMatch = rowData.day.match(/(week\d+)/);
+          if (weekMatch) {
+            const week = weekMatch[1];
+            if (week !== currentWeek) {
+              const weekRow = tableBody.insertRow();
+              const weekCell = weekRow.insertCell(0);
+              weekCell.colSpan = 6;
+              weekCell.innerText = week.replace("week1", "الأسبوع الأول").replace("week2", "الأسبوع الثاني").replace("week3", "الأسبوع الثالث");
+              weekCell.style.fontWeight = "bold";
+              currentWeek = week;
+            }
+          }
+          
+          const row = tableBody.insertRow();
+          // استخراج اليوم بشكل صحيح من البيانات
+          const day = rowData.day.split('_').pop(); // يأخذ آخر جزء بعد آخر _
+          row.insertCell(0).innerText = day;
+          row.insertCell(1).innerText = rowData.memorization;
+          row.insertCell(2).innerText = rowData.review;
+          
+          // خانة الإكمال
+          const completeCell = row.insertCell(3);
+          const completeCheck = document.createElement("input");
+          completeCheck.type = "checkbox";
+          completeCheck.checked = rowData.completed;
+          completeCheck.onclick = function() {
+            rowData.completed = this.checked;
+            saveSchedule();
+          };
+          completeCell.appendChild(completeCheck);
+          // زر التعديل
+          const editCell = row.insertCell(4);
+          const editButton = document.createElement("button");
+          editButton.innerText = "تعديل";
+          editButton.onclick = function() {
+            const newMemorization = prompt("تعديل مقدار الحفظ:", rowData.memorization);
+            const newReview = prompt("تعديل المراجعة:", rowData.review);
+            if (newMemorization !== null) rowData.memorization = newMemorization;
+            if (newReview !== null) rowData.review = newReview;
+            saveSchedule();
+            loadStudentSchedule(currentStudent);
+          };
+          editCell.appendChild(editButton);
+          // زر حذف السطر
+          const deleteCell = row.insertCell(5);
+          const deleteButton = document.createElement("button");
+          deleteButton.innerText = "حذف";
+          deleteButton.onclick = function() {
+            if (confirm("هل أنت متأكد من حذف هذا السطر؟")) {
+              schedules[currentStudent].splice(index, 1);
+              saveSchedule();
+              loadStudentSchedule(currentStudent);
+            }
+          };
+          deleteCell.appendChild(deleteButton);
+        });
+      }
+      // تحديث ألوان الجدول حسب الثيم الحالي
+      updateTableStyles();
+    }
+
+    // دالة إضافة بيانات جديدة إلى جدول الطالبة
+    function addToTable() {
+      const week = document.getElementById("week").value;
+      const day = document.getElementById("day").value;
+      const memorization = document.getElementById("memorization").value.trim();
+      const review = document.getElementById("review").value.trim();
+      if (memorization === "" || review === "") {
+        alert("يرجى إدخال مقدار الحفظ والمراجعة.");
+        return;
+      }
+      if (!schedules[currentStudent]) {
+        schedules[currentStudent] = [];
+      }
+      schedules[currentStudent].push({
+        day: `${week}_${day}`,
+        memorization: memorization,
+        review: review,
+        completed: false
+      });
+      saveSchedule();
+      loadStudentSchedule(currentStudent);
+      alert("تم إضافة السطر بنجاح!");
+    }
+
+    // دالة لإضافة طالبة جديدة (مسح البيانات القديمة)
+    function addNewStudent() {
+      document.getElementById("student-name").value = "";
+      currentStudent = null;
+      document.getElementById("student-section").style.display = "none";
+    }
+
+    // دالة "تحميل الجدول كصورة" (  )
+function saveTableAsImage() {
+  if (!currentStudent || !schedules[currentStudent] || schedules[currentStudent].length === 0) {
+    alert("لا يوجد بيانات في الجدول لتحميلها!");
+    return;
+  }
+
+  const captureElement = document.createElement("div");
+  const currentTheme = document.getElementById("color-theme").value;
+  
+  // تطبيق نفس خصائص الخلفية المختارة
+  if (currentTheme === "ramadan" || currentTheme === "cloud") {
+    captureElement.style.backgroundImage = themeStyles[currentTheme].bodyBg;
+    captureElement.style.backgroundSize = "cover";
+    captureElement.style.backgroundPosition = "center";
+  } else {
+    captureElement.style.backgroundColor = themeStyles[currentTheme].bodyBg;
+  }
+  
+  captureElement.style.padding = "20px";
+  captureElement.style.width = "800px";
+  captureElement.style.color = themeStyles[currentTheme].tableText;
+  captureElement.style.direction = "rtl";
+  
+  // إضافة شعار الجمعية والهيدر
+  const header = document.querySelector('.header').cloneNode(true);
+  captureElement.appendChild(header);
+  
+  // إضافة معلومات الطالبة
+  const title = document.createElement("h2");
+  title.style.textAlign = "center";
+  title.style.color = themeStyles[currentTheme].tableText;
+  title.innerText = "جدول الطالبة: " + currentStudent;
+  captureElement.appendChild(title);
+
+  // نسخ الجدول
+  const tableClone = document.getElementById("schedule-table").cloneNode(true);
+  tableClone.style.width = "100%";
+  tableClone.style.backgroundColor = themeStyles[currentTheme].tableBg;
+  tableClone.style.color = themeStyles[currentTheme].tableText;
+  tableClone.style.border = `2px solid ${themeStyles[currentTheme].buttonBg}`;
+  tableClone.style.borderCollapse = "collapse";
+  tableClone.style.marginTop = "20px";
+
+  // إخفاء أعمدة التعديل والحذف فقط
+  const headers = tableClone.querySelectorAll('th');
+  headers[4].style.display = 'none';
+  headers[5].style.display = 'none';
+
+  const rows = tableClone.getElementsByTagName('tr');
+  for (let row of rows) {
+    const cells = row.cells;
+    if (cells.length > 4) {
+      // تحويل خانة الإنجاز إلى مربع صغير مع علامة صح
+      if (cells[3]) {
+        const checkbox = cells[3].querySelector('input[type="checkbox"]');
+        if (checkbox) {
+          cells[3].innerHTML = `
+            <div style="
+              width: 20px;
+              height: 20px;
+              border: 2px solid ${themeStyles[currentTheme].buttonBg};
+              margin: auto;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: bold;
+              color: ${themeStyles[currentTheme].buttonBg};
+            ">
+              ${checkbox.checked ? '✓' : ''}
+            </div>`;
+        }
+      }
+      // إخفاء عمودي التعديل والحذف فقط
+      cells[4].style.display = 'none';
+      cells[5].style.display = 'none';
+    }
+  }
+
+  captureElement.appendChild(tableClone);
+
+  // إرفاق العنصر للصفحة مؤقتاً
+  document.body.appendChild(captureElement);
+
+  html2canvas(captureElement, {
+    scale: 2,
+    logging: false,
+    useCORS: true,
+    allowTaint: true,
+    backgroundColor: null
+  }).then(canvas => {
+    const image = canvas.toDataURL("image/png");
+    const link = document.createElement('a');
+    link.download = `جدول_${currentStudent}.png`;
+    link.href = image;
+    link.click();
+    document.body.removeChild(captureElement);
+  }).catch(err => {
+    console.error("حدث خطأ أثناء تحويل الجدول إلى صورة:", err);
+    alert("عذراً، حدث خطأ أثناء حفظ الجدول كصورة");
+  });
+}
+
+
+    // دالة حذف جدول الطالبة بالكامل
+    function deleteStudentSchedule(student) {
+      if (confirm("هل أنت متأكد من حذف جدول الطالبة " + student + "؟")) {
+        delete schedules[student];
+        saveSchedule();
+        showSavedSchedules(); // تحديث القائمة بعد الحذف
+      }
+    }
+        // إذا كانت الطالبة المحذوفة هي الحالية، يتم مسح القسم
+        if (currentStudent === student) {
+          document.getElementById("student-section").style.display = "none";
+          document.getElementById("student-name").value = "";
+          currentStudent = null;
+        }
+      
+    
+
+    // دالة عرض جداول الطالبات المخزنة مع زر حذف الجدول
+    function showSavedSchedules() {
+      const studentsList = document.getElementById("students-list");
+      studentsList.innerHTML = "";
+      for (let student in schedules) {
+        const studentDiv = document.createElement("div");
+        studentDiv.style.margin = "5px 0";
+        studentDiv.innerHTML = `<strong>${student}</strong> `;
+        
+        // زر العرض
+        const viewButton = document.createElement("button");
+        viewButton.innerText = "عرض";
+        viewButton.style.maxWidth = "150px";
+        viewButton.onclick = function() {
+          document.getElementById("student-name").value = student;
+          confirmStudent();
+        };
+        studentDiv.appendChild(viewButton);
+        
+        // زر حذف الجدول
+        const deleteButton = document.createElement("button");
+        deleteButton.innerText = "حذف الجدول";
+        deleteButton.style.maxWidth = "150px";
+        deleteButton.style.marginLeft = "10px";
+        deleteButton.onclick = function() {
+          deleteStudentSchedule(student);
+        };
+        studentDiv.appendChild(deleteButton);
+        
+        studentsList.appendChild(studentDiv);
+      }
+      document.getElementById("saved-students").style.display = "block";
+    }
+
+    // دالة حفظ البيانات في التخزين المحلي
+    function saveSchedule() {
+      localStorage.setItem('schedules', JSON.stringify(schedules));
+    }
+
+    // دالة تحديث ألوان الجدول (الخلفية والنص والحدود) حسب الثيم المحدد
+    function updateTableStyles() {
+      const table = document.getElementById("schedule-table");
+      const currentTheme = document.getElementById("color-theme").value;
+      const theme = themeStyles[currentTheme];
+      if (table) {
+        table.style.backgroundColor = theme.tableBg;
+        const cells = table.querySelectorAll("th, td");
+        cells.forEach(cell => {
+          if (cell.tagName === "TH") {
+            cell.style.color = headerTextColors[currentTheme];
+          } else {
+            cell.style.color = theme.tableText;
+          }
+          cell.style.borderColor = theme.buttonBg;
+        });
+      }
+    }
+
+    // دالة تغيير لون الخلفية وتحديث ألوان الأزرار، الحقول، الجدول والفوتر
+    function changeBackgroundColor() {
+      const selected = document.getElementById("color-theme").value;
+      const theme = themeStyles[selected];
+      if (selected === "ramadan" || selected === "cloud") {
+        document.body.style.backgroundImage = theme.bodyBg;
+        document.body.style.backgroundColor = "";
+        document.body.style.backgroundSize = "cover"; // تثبيت حجم الخلفية لتناسب الجوال
+        document.body.style.backgroundPosition = "center center"; // تثبيت الخلفية في المنتصف
+      } else {
+        document.body.style.backgroundColor = theme.bodyBg;
+        document.body.style.backgroundImage = "";
+      }
+      // تحديث لون الأزرار
+      const buttons = document.querySelectorAll("button");
+      buttons.forEach(btn => {
+        btn.style.backgroundColor = theme.buttonBg;
+      });
+      // تحديث لون حقول الإدخال والحدود
+      const inputs = document.querySelectorAll("input, select");
+      inputs.forEach(el => {
+        el.style.backgroundColor = theme.inputBg;
+        el.style.color = theme.inputText;
+        el.style.borderColor = "white";
+      });
+      // تحديث ألوان الجدول
+      updateTableStyles();
+      // تحديث لون خلفية الفوتر (مثلاً باستخدام لون الأزرار)
+      document.querySelector('.footer').style.backgroundColor = selected === "ramadan" || selected === "cloud" ? "transparent" : theme.buttonBg;
+    }
+
+    // عند تحميل الصفحة، تطبيق الثيم الافتراضي
+    changeBackgroundColor();
+
+    document.getElementById('saveBtn').addEventListener('click', function() {
+    let table = document.getElementById('studentTable');
+    let rows = table.getElementsByTagName('tr');
+    
+    // إخفاء أعمدة الحذف والتعديل
+    for (let i = 0; i < rows.length; i++) {
+        let cells = rows[i].getElementsByTagName('td');
+        if (cells.length > 0) {
+            cells[3].style.display = 'none'; // إخفاء عمود الحذف
+            cells[4].style.display = 'none'; // إخفاء عمود التعديل
+        }
+    }
+    
+    // حفظ الجدول كصورة
+    html2canvas(table).then(canvas => {
+        let link = document.createElement('a');
+        link.href = canvas.toDataURL();
+        link.download = 'جدول_الحفظ.png';
+        link.click();
+        
+        // إعادة إظهار الأعمدة بعد الحفظ
+        for (let i = 0; i < rows.length; i++) {
+            let cells = rows[i].getElementsByTagName('td');
+            if (cells.length > 0) {
+                cells[3].style.display = ''; // إظهار عمود الحذف
+                cells[4].style.display = ''; // إظهار عمود التعديل
+            }
+        }
+    });
+});
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</body>
+</html>
